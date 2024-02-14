@@ -1,12 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from feeds.models import Feed
+
 # Create your models here.
 class User(AbstractUser):
-    email = models.EmailField(max_lenght=255, unique=True)
-    password = models.CharField(max_length=255)
+    email = models.EmailField(("email address"), blank=False, unique=True)
     username = None;
     
+    feeds = models.ManyToManyField(Feed)
+    
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['email', 'password']
+    REQUIRED_FIELDS = []
     

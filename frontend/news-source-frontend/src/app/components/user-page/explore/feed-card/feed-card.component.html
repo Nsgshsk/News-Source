@@ -1,0 +1,12 @@
+<div class="col">
+    <div class="card shadow-sm">
+        <img src="{{feedCard.image}}" class="bd-placeholder-img card-img-top" width="100%" height="300" style="object-fit:cover" onerror='this.style.display = "none"'>
+        <div class="card-body">
+            <h5 class="card-title">{{feedCard.name}}</h5>
+            <p class="card-text truncate">{{feedCard.description.trim()}}</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <a class="btn btn-sm btn-outline-secondary stretched-link" href="{{feedCard.link}}">Visit</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -95,10 +95,10 @@ WSGI_APPLICATION = 'news_source_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'verceldb',
-        'USER': 'default',
-        'PASSWORD': '70LFHRNEJYSA',
-        'HOST': 'ep-solitary-night-99555913-pooler.eu-central-1.postgres.vercel-storage.com',
+        'NAME': 'news_source_development',
+        'USER': 'dev_app',
+        'PASSWORD': 'developer@123',
+        'HOST': 'localhost',
         'PORT': '5432'
     }
 }

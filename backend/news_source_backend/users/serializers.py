@@ -25,4 +25,13 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super(UserTokenObtainPairSerializer, cls).get_token(user)
+
+        # Add custom claims
+        token['first_name'] = user.first_name
+        return token
         

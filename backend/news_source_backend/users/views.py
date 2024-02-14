@@ -1,16 +1,21 @@
 from django.shortcuts import render
 
-from rest_framework.views import APIView
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.models import User
-from users.serializers import UserSerializer
+from users.serializers import UserSerializer, UserTokenObtainPairSerializer
 
 # Create your views here.
+class ObtainTokenPair(TokenObtainPairView):
+    permission_classes = (AllowAny,)
+    serializer_class = UserTokenObtainPairSerializer
+
 class RegisterUser(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -18,20 +23,7 @@ class RegisterUser(APIView):
             serializer.save()
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response({'message': 'Invalid request!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
-class LogInUser(APIView):
-    def post(self, request):
-        email = request.data['email']
-        password = request.data['password']
-        
-        user = User.objects.filter(email=email).first()
-        
-        if user is None:
-            raise AuthenticationFailed('Account doesn\'t exist!')
-        elif not user.check_password(password):
-            raise AuthenticationFailed('Wrong password!')
-        
-        refresh = RefreshToken.for_user(user)
-        return Response({'refresh': str(refresh), 'access': str(refresh.access_token)}, status=status.HTTP_202_ACCEPTED)
-    
+            if User.objects.filter(email=serializer.data['email']):
+                return Response({'message': 'Account already exists!'}, status=status.HTTP_409_CONFLICT)
+            else:
+                return Response({'message': 'Invalid request!'}, status=status.HTTP_406_NOT_ACCEPTABLE)

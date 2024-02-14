@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView, TokenBlacklistView
 
-from users.views import RegisterUser, LogInUser
+from users.views import RegisterUser, ObtainTokenPair
 
 urlpatterns = [
-    path('', LogInUser.as_view()),
     path('register/', RegisterUser.as_view()),
-    path('settings/', ),
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    #path('settings/', ),
+    path('token/', ObtainTokenPair.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist')
 ]
