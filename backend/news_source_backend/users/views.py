@@ -21,9 +21,6 @@ class RegisterUser(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Account created succesfully!'}, status=status.HTTP_201_CREATED)
         else:
-            if User.objects.filter(email=serializer.data['email']):
-                return Response({'message': 'Account already exists!'}, status=status.HTTP_409_CONFLICT)
-            else:
-                return Response({'message': 'Invalid request!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response(data=serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)

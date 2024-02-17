@@ -1,7 +1,8 @@
 export interface ArticleCard {
-    title: string,
-    link: string,
-    image: string,
+    item_title: string,
+    item_category: string,
+    item_url: string,
+    item_image: string,
     summary: string,
-    published: string
+    published: Date
 }

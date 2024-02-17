@@ -1,11 +1,15 @@
 <div class="col">
     <div class="card shadow-sm">
-        <img src="{{feedCard.image}}" class="bd-placeholder-img card-img-top" width="100%" height="300" style="object-fit:cover" onerror='this.style.display = "none"'>
+        <!-- <img src="{{feedCard.source_image}}" class="bd-placeholder-img card-img-top" width="100%" height="300" style="object-fit:cover" onerror='this.style.display = "none"'> -->
         <div class="card-body">
-            <h5 class="card-title">{{feedCard.name}}</h5>
-            <p class="card-text truncate">{{feedCard.description.trim()}}</p>
+            <h5 class="card-title">{{feedCard.source_name}}</h5>
+            <p class="card-text truncate">{{feedCard.source_description}}</p>
+            <input type="number" value="{{feedCard.id}}" style="display: none;" formControlName="id">
             <div class="d-flex justify-content-between align-items-center">
-                <a class="btn btn-sm btn-outline-secondary stretched-link" href="{{feedCard.link}}">Visit</a>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-outline-secondary" type="submit">Добави/Премахни</button>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{feedCard.source_url}}">Посети</a>
+                </div>
             </div>
         </div>
     </div>

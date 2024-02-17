@@ -2,7 +2,7 @@
     <section class="py-5 text-center container">
         <div class="row py-lg-5">
             <div class="col-lg-6 col-md-8 mx-auto">
-                <h1 class="fw-light">Добре дошли!</h1>
+                <h1 class="fw-light">Намерете още източници</h1>
                 <!-- <p class="lead text-body-secondary">Something short and leading about the collection below—its contents,
                     the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it
                     entirely.</p> -->
@@ -11,13 +11,52 @@
     </section>
     <div class="album py-5 bg-body-tertiary">
         <div class="container">
-            @if (feedCardList?.length != 0) {
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                    <app-feed-card *ngFor="let feedCard of feedCardList" [feedCard]="feedCard"></app-feed-card>
-                </div>
+            <h3>Твоите източници</h3>
+            <br>
+            @if (this.userFeedsLoaded | async) {
+                @if (userFeedCardList.length != 0) {
+                    <form [formGroup]="removeFeedFormGroup" (ngSubmit)="removeFeed()">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                            <app-feed-card [form]="removeFeedFormGroup" *ngFor="let userFeedCard of userFeedCardList"
+                                [feedCard]="userFeedCard"></app-feed-card>
+                        </div>
+                    </form>
+                    }
+                    @else {
+                    <p style="font-size: large;"><strong>Нямате добавени източници!</strong></p>
+                    }
             }
             @else {
-                <p style="font-size: large;"><strong>Нямате нищо в вашата информационна лента!</strong></p>
+                <div class="d-flex align-items-center">
+                    <strong role="status">Loading...</strong>
+                    <div class="spinner-grow ms-auto" aria-hidden="true"></div>
+                </div>
+            }
+        </div>
+    </div>
+    <hr>
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <h3>Източници</h3>
+            <br>
+            @if (this.feedsLoaded | async) {
+            @if (feedCardList.length != 0) {
+            <form [formGroup]="addFeedFormGroup" (ngSubmit)="addFeed()">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    <app-feed-card [form]="addFeedFormGroup" *ngFor="let feedCard of feedCardList"
+                        [feedCard]="feedCard"></app-feed-card>
+                </div>
+            </form>
+            }
+            @else {
+            <p style="font-size: large;"><strong>Немога да повярвам, че тук е празно! :)</strong></p>
+            }
+            }
+            @else {
+            <div class="d-flex align-items-center">
+                <strong role="status">Loading...</strong>
+                <div class="spinner-grow ms-auto" aria-hidden="true"></div>
+            </div>
             }
         </div>
     </div>

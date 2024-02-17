@@ -23,12 +23,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ew18v$#k)-v^1g0y0u%o)&swyfv6vn*8bk7l_j@570g!*1=x_g'
+SECRET_KEY = """
+-----BEGIN RSA PRIVATE KEY-----
+MIIBOwIBAAJBAKS92v0NF29jFg6NRuxeaIsBQ7FzEkBBIKevFhjCmuXvw7Dubtqz
+kBsn8RI/BYCMJOOQZGLJkUsgxRrNLm6o7nMCAwEAAQJBAJVMHecQ8zkWAkpDzI+v
+62x2Q+PQFi03GKH+sbbUvk48a9L21T7BuL29JCDqD7CooeSA9n+7ImNkMWmE7Pki
+spECIQDc8K2qGmD2MM+qpuyBPK28eLvcYFyHnxYNLhBIhf7a+wIhAL7iNNzY8ogf
++3vuV0J5bUT8fOP4b7FAzvP8PqpSyODpAiEAy5akEIj6LCHSWmgyquwlE/UU9v98
+hCReB4sYyhtfOp0CIBIrOdjjlYI7eRZ8wzWClVIBrmmMliULBCfZFKXlp1UxAiAo
+bl0uefVo67m7oOADg8BnT2r3qFyAhLUQGBZxLTbreQ==
+-----END RSA PRIVATE KEY-----"""
+
+PUBLIC_KEY = """
+-----BEGIN PUBLIC KEY-----
+MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKS92v0NF29jFg6NRuxeaIsBQ7FzEkBB
+IKevFhjCmuXvw7DubtqzkBsn8RI/BYCMJOOQZGLJkUsgxRrNLm6o7nMCAwEAAQ==
+-----END PUBLIC KEY-----"""
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app']
 
 
 # Application definition
@@ -51,6 +66,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,15 +74,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    'https://localhost:4200',
-)
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS  = [
+    'http://localhost:4200',
+]
 
 ROOT_URLCONF = 'news_source_backend.urls'
 
@@ -118,15 +131,15 @@ REST_FRAMEWORK = {
     ],
 }
 
-DEFAULTS = {
+SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 
-    'ALGORITHM': 'HS256',
+    'ALGORITHM': 'RS256',
     'SIGNING_KEY': settings.SECRET_KEY,
-    'VERIFYING_KEY': None,
+    'VERIFYING_KEY': settings.PUBLIC_KEY,
     'AUDIENCE': None,
     'ISSUER': None,
 

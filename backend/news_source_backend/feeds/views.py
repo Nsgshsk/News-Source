@@ -17,7 +17,14 @@ class FeedList(APIView):
     jwt_authentication = JWTAuthentication()
     
     def get(self, request):
-        feeds = Feed.objects.all()
+        response = self.jwt_authentication.authenticate(request)
+        
+        if response is None:
+            return Response({'message': 'No token is provided in the header or the header is missing!'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        user, token = response
+        
+        feeds = Feed.objects.exclude(id__in = user.feeds.values_list('id', flat=True))
         serialized_feeds = FeedSerializer(feeds, many=True)
         
         return Response(data=serialized_feeds.data, status=status.HTTP_202_ACCEPTED)
@@ -30,17 +37,17 @@ class FeedList(APIView):
         
         user, token = response
         
-        if not user.is_superuser:
-            return Response({'message': 'Unauthorized user!'}, status=status.HTTP_401_UNAUTHORIZED)
+        """ if not user.is_superuser:
+            return Response({'message': 'Unauthorized user!'}, status=status.HTTP_401_UNAUTHORIZED) """
         
-        serializer = FeedSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'message': 'Invalid request!'}, status=status.HTTP_400_BAD_REQUEST)
+        for url in request.data['feedurls']:
+            Feed.create_feed_info(url)
         
-    def put(self, request):
+        serializer = FeedSerializer(Feed.objects.all(), many=True)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+        
+    def patch(self, request):
         response = self.jwt_authentication.authenticate(request)
         
         if response is None:
@@ -48,15 +55,16 @@ class FeedList(APIView):
         
         user, token = response
         
-        if not user.is_superuser:
-            return Response({'message': 'Unauthorized user!'}, status=status.HTTP_401_UNAUTHORIZED)
+        """ if not user.is_superuser:
+            return Response({'message': 'Unauthorized user!'}, status=status.HTTP_401_UNAUTHORIZED) """
         
-        serializer = FeedSerializer(data=request.data)
+        feed = Feed.objects.get(pk=request.data['id'])
+        serializer = FeedSerializer(feed, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.update()
+            serializer.save()
             return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
         else:
-            return Response({'message': 'Invalid request!'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=serializer.data, status=status.HTTP_400_BAD_REQUEST)
         
     def delete(self, request):
         response = self.jwt_authentication.authenticate(request)
@@ -91,7 +99,7 @@ class UserFeedList(APIView):
         user_feeds = user.feeds.all()
         if user_feeds:
             user_feeds_serialized = FeedSerializer(user_feeds, many=True)
-            return Response(data=user_feeds_serialized.data, status=status.HTTP_302_FOUND)
+            return Response(data=user_feeds_serialized.data, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'message': f'There are no feeds for {user.first_name}!'} ,status=status.HTTP_204_NO_CONTENT)
         
@@ -103,7 +111,21 @@ class UserFeedList(APIView):
         
         user, token = response
         
-        user.feeds.set(request.data['feedids'])
+        user.feeds.add(pk=request.data['feedids'])
+        
+        user_feeds_serialized = FeedSerializer(user.feeds.all(), many=True)
+        
+        return Response(data=user_feeds_serialized.data, status=status.HTTP_202_ACCEPTED)
+    
+    def delete(self, request):
+        response = self.jwt_authentication.authenticate(request)
+        
+        if response is None:
+            return Response({'message': 'No token is provided in the header or the header is missing!'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        user, token = response
+        
+        user.feeds.remove(pk=request.data['feedids'])
         
         user_feeds_serialized = FeedSerializer(user.feeds.all(), many=True)
         
@@ -127,7 +149,7 @@ class FeedItemsList(APIView):
             feedItems.append(feedItem)
         
         feedItems = FeedItemSerializer(feedItems, many=True)
-        return Response(data=feedItems.data, status=status.HTTP_302_FOUND)
+        return Response(data=feedItems.data, status=status.HTTP_202_ACCEPTED)
     
 class UserFeedItemsList(APIView):
     permission_classes = [IsAuthenticated]
@@ -158,4 +180,4 @@ class UserFeedItemsList(APIView):
         feedItems.sort(reverse=True, key=lambda item: item.published)
         
         feedItems = FeedItemSerializer(feedItems, many=True)
-        return Response(data=feedItems.data, status=status.HTTP_302_FOUND)
+        return Response(data=feedItems.data, status=status.HTTP_202_ACCEPTED)
