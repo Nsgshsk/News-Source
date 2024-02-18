@@ -14,23 +14,22 @@
             <h3>Твоите източници</h3>
             <br>
             @if (this.userFeedsLoaded | async) {
-                @if (userFeedCardList.length != 0) {
-                    <form [formGroup]="removeFeedFormGroup" (ngSubmit)="removeFeed()">
-                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                            <app-feed-card [form]="removeFeedFormGroup" *ngFor="let userFeedCard of userFeedCardList"
-                                [feedCard]="userFeedCard"></app-feed-card>
-                        </div>
-                    </form>
-                    }
-                    @else {
-                    <p style="font-size: large;"><strong>Нямате добавени източници!</strong></p>
-                    }
+            @if (userFeedCardList.length != 0) {
+                <form >
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                        <app-user-feed-card (reload)="reload()" *ngFor="let userFeedCard of userFeedCardList" [userFeedCard]="userFeedCard"></app-user-feed-card>
+                    </div>
+                </form>
             }
             @else {
-                <div class="d-flex align-items-center">
-                    <strong role="status">Loading...</strong>
-                    <div class="spinner-grow ms-auto" aria-hidden="true"></div>
-                </div>
+            <p style="font-size: large;"><strong>Нямате добавени източници!</strong></p>
+            }
+            }
+            @else {
+            <div class="d-flex align-items-center">
+                <strong role="status">Loading...</strong>
+                <div class="spinner-grow ms-auto" aria-hidden="true"></div>
+            </div>
             }
         </div>
     </div>
@@ -41,12 +40,9 @@
             <br>
             @if (this.feedsLoaded | async) {
             @if (feedCardList.length != 0) {
-            <form [formGroup]="addFeedFormGroup" (ngSubmit)="addFeed()">
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                    <app-feed-card [form]="addFeedFormGroup" *ngFor="let feedCard of feedCardList"
-                        [feedCard]="feedCard"></app-feed-card>
-                </div>
-            </form>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <app-feed-card (reload)="reload()" *ngFor="let feedCard of feedCardList" [feedCard]="feedCard"></app-feed-card>
+            </div>
             }
             @else {
             <p style="font-size: large;"><strong>Немога да повярвам, че тук е празно! :)</strong></p>

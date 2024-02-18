@@ -4,14 +4,14 @@ import { FeedCardService } from '../../../../services/feed-card/feed-card.servic
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-feed-card',
+  selector: 'app-user-feed-card',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './feed-card.component.html',
-  styleUrl: './feed-card.component.css'
+  templateUrl: './user-feed-card.component.html',
+  styleUrl: './user-feed-card.component.css'
 })
-export class FeedCardComponent implements AfterViewInit {
-  @Input() feedCard!: FeedCard;
+export class UserFeedCardComponent implements AfterViewInit {
+  @Input() userFeedCard!: FeedCard;
   ready!: Promise<boolean>;
   @Output() reload = new EventEmitter();
 
@@ -21,8 +21,8 @@ export class FeedCardComponent implements AfterViewInit {
       this.ready = Promise.resolve(true);
   }
 
-  addFeed(id: number) {
-    this.feedCardService.addUserFeed(id);
+  removeFeed(id: number){
+    this.feedCardService.removeUserFeed(id);
     this.reload.emit();
   }
 }

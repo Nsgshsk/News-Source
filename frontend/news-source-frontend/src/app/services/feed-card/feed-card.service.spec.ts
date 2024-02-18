@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { FeedCardService } from './feed-card.service';
 
 describe('FeedCardService', () => {

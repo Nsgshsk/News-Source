@@ -28,7 +28,7 @@ export class FeedCardService {
       },
     };
     if (id > -1) {
-      this.http.delete(userFeedsLink, options).subscribe();
+      this.http.delete(userFeedsLink, options).subscribe((data) => {});
       return true;
     }
     else
@@ -40,7 +40,7 @@ export class FeedCardService {
       feedids: id
     }
     if (id > -1) {
-      this.http.post(userFeedsLink, data).subscribe();
+      this.http.post(userFeedsLink, data).subscribe((data) => {});
       return true;
     }
     else

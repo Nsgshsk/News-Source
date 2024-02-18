@@ -1,4 +1,3 @@
-from dateutil import parser
 from bs4 import BeautifulSoup
 from feedparser import parse
 from django.db import models
@@ -41,7 +40,7 @@ class FeedItem(models.Model):
     item_url = models.URLField(blank=False, default='')
     image_source = models.URLField(blank=True, default='')
     summary = models.CharField(max_length=255, blank=True, default='')
-    published = models.DateTimeField(auto_now=True, blank=False)
+    published = models.CharField(max_length=150, blank=False)
     
     def fill_article_info(self, entry):
         self.item_title = entry.title
@@ -62,7 +61,7 @@ class FeedItem(models.Model):
                 e.extract()
             
         self.summary = str(summary)
-        self.published = parser.parse(entry.published)
+        self.published = entry.published[:-9]
     
     class Meta:
         managed = False

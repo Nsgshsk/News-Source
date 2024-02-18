@@ -103,7 +103,7 @@ class UserFeedList(APIView):
         else:
             return Response({'message': f'There are no feeds for {user.first_name}!'} ,status=status.HTTP_204_NO_CONTENT)
         
-    def put(self, request):
+    def post(self, request):
         response = self.jwt_authentication.authenticate(request)
         
         if response is None:
@@ -111,7 +111,7 @@ class UserFeedList(APIView):
         
         user, token = response
         
-        user.feeds.add(pk=request.data['feedids'])
+        user.feeds.add(request.data['feedids'])
         
         user_feeds_serialized = FeedSerializer(user.feeds.all(), many=True)
         
@@ -125,7 +125,7 @@ class UserFeedList(APIView):
         
         user, token = response
         
-        user.feeds.remove(pk=request.data['feedids'])
+        user.feeds.remove(request.data['feedids'])
         
         user_feeds_serialized = FeedSerializer(user.feeds.all(), many=True)
         
