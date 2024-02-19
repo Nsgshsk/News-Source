@@ -9,9 +9,7 @@
 ### Нужни езици
 
 > Python>=3.10
->
 > node.js>=20.11 LTS
->
 > PostgreSQL>=16
 
 ### Backend
