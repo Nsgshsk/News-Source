@@ -15,6 +15,7 @@
 ### Backend
 
 1.Отидете в папката **backend/news_source_backend**
+
 2.Изпълнете следната команда
 
 > pip install -r requirements.txt
@@ -26,6 +27,7 @@
 ### Frontend
 
 1. Отидете в frontend/news-source-frontend
+
 2. Изпълнете следната команда
 
 > npm install
