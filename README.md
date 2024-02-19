@@ -8,8 +8,8 @@
 
 ### Нужни езици
 
-- Python>=3.10
-- node.js>=20.11 LTS
+- Python>=3.12
+- Node.js>=20.11 LTS
 - PostgreSQL>=16
 
 ### Backend
@@ -22,7 +22,11 @@
 
 ### Database
 
-След, като инсталирате PostgreSQL,
+След, като инсталирате PostgreSQL и терминалната му програма (те се инсталират заедно), изпълнете следната команда
+
+> pg_restore -h localhost -p 5432 -U postgres -W -c -C database.sql
+
+Ако трябва, променете някои от параметрите в командата.
 
 ### Frontend
 
@@ -34,12 +38,14 @@
 
 ## Инструкции за пускане
 
-1. Пуснете backend сървъра
+1. Пуснете сървъра с базата данни
 
-> python manage.py runserver
+2. Пуснете backend сървъра
 
-2. Пуснете frontend сървъра
+> python manage.py runserver 8000
 
-> ng serve
+3. Пуснете frontend сървъра
 
+> ng serve --port 4200
 
+4. Влезте в сайта през http://localhost:4200
