@@ -22,7 +22,10 @@ class Feed(models.Model):
             try:
                 feed.source_image = feed_info.feed.image.href
             except:
-                feed.source_image = ''
+                try:
+                    feed.source_image = feed_info.feed.logo
+                except:
+                    feed.source_image = ''
             feed.source_description = feed_info.feed.description
             feed.source_url = url
             

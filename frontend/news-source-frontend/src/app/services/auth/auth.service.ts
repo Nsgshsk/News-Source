@@ -48,7 +48,10 @@ export class AuthService {
 
   userLogout(){
     var payload = this.getTokens();
-    this.http.post(baseLogout, JSON.stringify(payload)).subscribe();
+    var payloadJson = {
+      "refresh": payload.refresh
+    }
+    this.http.post(baseLogout, payloadJson).subscribe();
     this.removeTokens();
   }
 
