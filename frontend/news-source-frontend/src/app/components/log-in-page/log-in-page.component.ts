@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-log-in-page',
   standalone: true,
-  imports: [HttpClientModule, ReactiveFormsModule, CommonModule ],
+  imports: [HttpClientModule, ReactiveFormsModule, CommonModule],
   templateUrl: './log-in-page.component.html',
   styleUrl: './log-in-page.component.css'
 })
@@ -19,29 +19,35 @@ export class LogInPageComponent implements OnInit {
     password: new FormControl('', [Validators.required])
   });
 
-  constructor (private authService: AuthService,
-    private router: Router) {}
+  errors!: Promise<boolean>;
+  errorMessage!: string;
+
+  constructor(private authService: AuthService,
+    private router: Router) { }
 
   ngOnInit(): void {
-      if (!this.authService.isRefreshExpired())
-        this.router.navigate(['/personal']);
+    if (!this.authService.isRefreshExpired())
+      this.router.navigate(['/personal']);
   }
 
   userLogin() {
     var loginData = this.loginForm.value as LogIn;
     if (loginData.email && loginData.password) {
-      this.authService.userLogin(loginData).subscribe((data) => {
-        if(data) {
-          this.router.navigate(["/personal"]);
-        }
-        else {
-          console.log('failed');
+      this.authService.userLogin(loginData).subscribe({
+        next: data => {
+          if (data) {
+            this.router.navigate(["/personal"]);
+          }
+          else {
+            this.errorMessage = 'Не съществува акаунт с такива данни!'
+            this.errors = Promise.resolve(true);
+          }
         }
       });
     }
     else {
-      console.log('failed');
+      this.errorMessage = 'Невалидни данни!'
+      this.errors = Promise.resolve(true);
     }
-    
   }
 }

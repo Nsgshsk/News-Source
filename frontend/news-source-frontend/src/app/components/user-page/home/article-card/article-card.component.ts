@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 export class ArticleCardComponent implements AfterViewInit{
   @Input() articleCard!: ArticleCard;
   ready!: Promise<boolean>;
+  defaultImage = "/assets/images/placeholder.png";
 
   ngAfterViewInit(): void {
       this.ready = Promise.resolve(true);

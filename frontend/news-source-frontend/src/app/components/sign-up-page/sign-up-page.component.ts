@@ -21,9 +21,10 @@ export class SignUpPageComponent implements OnInit {
     password: new FormControl('', Validators.required)
   });
 
+  anyErrors!: Promise<boolean>;
+
   errors = {
     message: '',
-    any: false,
     email: '',
     password: '',
   }
@@ -48,7 +49,10 @@ export class SignUpPageComponent implements OnInit {
         else if (data.email || data.password) {
           this.errors.email = data.email[0];
           this.errors.password = data.password[0];
-          this.errors.any = true;
+          this.anyErrors = Promise.resolve(true);
+        }
+        else {
+          console.log('What happened?');
         }
       })
   }

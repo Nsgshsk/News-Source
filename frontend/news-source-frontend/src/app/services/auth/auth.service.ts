@@ -1,13 +1,11 @@
+import { MessageAPI } from './../../models/MessageAPI';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LogIn } from '../../models/LogIn';
 import { Token } from '../../models/Token';
-import { error } from 'console';
-import { BehaviorSubject, catchError, map, of } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { UserToken } from '../../models/User';
 import { Register } from '../../models/Register';
-import { MessageAPI } from '../../models/MessageAPI';
 
 const baseRegister: string = 'http://127.0.0.1:8000/api/auth/register/'
 const baseLogin: string = 'http://127.0.0.1:8000/api/auth/token/'
@@ -46,7 +44,7 @@ export class AuthService {
       return true
   }
 
-  userLogout(){
+  userLogout() {
     var payload = this.getTokens();
     var payloadJson = {
       "refresh": payload.refresh
@@ -60,13 +58,19 @@ export class AuthService {
       map(
         (data) => {
           return data as MessageAPI;
-        },
-        catchError(
-          (error) => {
-            console.log(error);
-            return of(false)
+        }),
+      catchError(
+        (error) => {
+          console.log(error);
+
+          let data: MessageAPI = {
+            message: '',
+            email: error.error.email ?? [],
+            password: error.error.password ?? []
           }
-        )
+
+          return of(data);
+        }
       )
     )
   }
@@ -80,18 +84,17 @@ export class AuthService {
           this.changeTokens(tokens)
 
           return true;
-        },
-        catchError(
-          (error) => {
-            console.log(error);
-            return of(false)
-          }
-        )
+        }),
+      catchError(
+        (error) => {
+          console.log(error);
+          return of(false)
+        }
       )
     )
   }
 
-  refreshTokens () {
+  refreshTokens() {
     var payload = this.getTokens();
     return this.http.post(baseRefresh, payload).pipe(
       map(
@@ -101,13 +104,12 @@ export class AuthService {
           this.changeTokens(tokens);
 
           return !this.jwtHelper.isTokenExpired(tokens.access);
-        },
-        catchError(
-          (error) => {
-            console.log(error);
-            return of(false);
-          }
-        )
+        }),
+      catchError(
+        (error) => {
+          console.log(error);
+          return of(false);
+        }
       )
     )
   }

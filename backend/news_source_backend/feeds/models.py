@@ -1,3 +1,4 @@
+from dateutil import parser
 from bs4 import BeautifulSoup
 from feedparser import parse
 from django.db import models
@@ -50,21 +51,23 @@ class FeedItem(models.Model):
         self.item_url = entry.link
             
         summary = BeautifulSoup(entry.summary, 'html.parser')
-
-        self.image_source = ''
-        try:
-            image = entry.media_content[0]['url']
-            self.image_source = image
-        except:
-            if (summary.find('img')) is not None:
-                image = summary.img.extract()
-                self.image_source = image['src']
-        finally:
-            for e in summary.findAll('br'):
-                e.extract()
-            
-        self.summary = str(summary)
-        self.published = entry.published[:-9]
+        image = ''
+        
+        if 'image' in entry:
+            image = entry.image.src
+        elif 'media_content' in entry:
+            for media in entry.media_content:
+                if type in media and media['type'] == 'image/jpeg':
+                    image = media['url']
+                    break;
+        elif 'media_thumbnail' in entry:
+            image = entry.media_thumbnail[0]['url']
+        elif summary.find('img') is not None:
+            image = summary.img.extract()['src']
+        
+        self.image_source = image
+        self.summary = summary.get_text()
+        self.published = parser.parse(entry.published).strftime('%a, %b %d %Y, %H:%M')
     
     class Meta:
         managed = False
