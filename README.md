@@ -1,5 +1,9 @@
 # News Source
 
+Сайт: ***В разработка***
+
+Код на приложението: [Nsgshsk - Github](https://github.com/Nsgshsk/News-Source)
+
 ## Описание
 
 Уеб приложение, което извлича новинарски статии от различни новинарски сайтове с помощта на **RSS** ленти
@@ -14,19 +18,27 @@
 
 ### Backend
 
-1.Отидете в папката ***backend/news_source_backend***
+1. Отидете в папката ***backend/news_source_backend***
 
-2.Изпълнете следната команда
+2. Изпълнете следната команда
 
-> pip install -r requirements.txt
+    > pip install -r requirements.txt
+
+---
 
 ### Database
 
-След, като инсталирате PostgreSQL и терминалната му програма (те се инсталират заедно), изпълнете следната команда
+След, като инсталирате PostgreSQL и терминалната му програма (те се инсталират заедно), изпълнете следните стъпки:
 
-> pg_restore -h localhost -p 5432 -U postgres -W -c -C database.sql
+1. Създайте базата данни ***news_source_development***
+
+2. Изпълнете следната команда
+
+    > psql -d news_source_development < database.sql
 
 Ако трябва, променете някои от параметрите в командата.
+
+---
 
 ### Frontend
 
@@ -34,7 +46,7 @@
 
 2. Изпълнете следната команда
 
-> npm install
+    > npm install
 
 ## Инструкции за пускане
 
@@ -42,10 +54,10 @@
 
 2. Пуснете backend сървъра
 
-> python manage.py runserver 8000
+    > python manage.py runserver 8000
 
 3. Пуснете frontend сървъра
 
-> ng serve --port 4200
+    > ng serve --port 4200
 
 4. Влезте в сайта през http://localhost:4200

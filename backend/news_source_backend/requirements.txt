@@ -8,3 +8,4 @@ psycopg2-binary>=2.9.9
 whitenoise
 django-cors-headers
 django-filter
+python-dateutil
