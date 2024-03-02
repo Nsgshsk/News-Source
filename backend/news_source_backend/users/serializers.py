@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
             'password': { 'write_only': True }
         }
     
-    def validate_password(seld, value):
+    def validate_password(self, value):
         validate_password(value)
         return value
         
