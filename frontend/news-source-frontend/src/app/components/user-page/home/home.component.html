@@ -12,7 +12,7 @@
     @if (this.articlesLoaded | async) {
         <div class="album py-5 bg-body-tertiary">
             <div class="container">
-                @if (articleCardList.length || 0 != 0) {
+                @if (articleCardList.length != 0) {
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                         <app-article-card *ngFor="let articleCard of articleCardList" [articleCard]="articleCard"></app-article-card>
                     </div>

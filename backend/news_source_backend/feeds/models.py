@@ -20,14 +20,16 @@ class Feed(models.Model):
 
         if feed_info.entries:
             feed.source_name = feed_info.feed.title
-            try:
-                feed.source_image = feed_info.feed.image.href
-            except:
-                try:
-                    feed.source_image = feed_info.feed.logo
-                except:
-                    feed.source_image = ''
-            feed.source_description = feed_info.feed.description
+            
+            image = ''
+            
+            if 'image' in feed_info.image:
+                image = feed_info.image.href
+            elif 'logo' in feed_info.feed:
+                image = feed_info.feed.logo
+                    
+            feed.source_image = image
+            feed.source_description = BeautifulSoup(feed_info.feed.description, 'html.parser').get_text()
             feed.source_url = url
             
             feed.save()

@@ -24,7 +24,7 @@ export class FeedCardService {
   removeUserFeed(id: number) {
     const options = {
       body: {
-        feedids: id,
+        feedid: id,
       },
     };
     if (id > -1) {
@@ -32,18 +32,18 @@ export class FeedCardService {
       return true;
     }
     else
-      return false
+      return false;
   }
 
   addUserFeed(id: number) {
     const data = {
-      feedids: id
+      feedid: id
     }
     if (id > -1) {
       this.http.post(userFeedsLink, data).subscribe((data) => {});
       return true;
     }
     else
-      return false
+      return false;
   }
 }

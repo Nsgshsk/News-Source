@@ -29,16 +29,30 @@ export class ExploreComponent implements OnInit {
   }
 
   retriveAllFeedCards(): void {
-    this.feedCardService.getAllFeeds().subscribe(data => {
-      this.feedCardList = data;
-      this.feedsLoaded = Promise.resolve(true);
+    this.feedCardService.getAllFeeds().subscribe({
+      next: data => {
+        this.feedCardList = data;
+        this.feedsLoaded = Promise.resolve(true);
+      },
+      error: error => {
+        console.log(error);
+        this.feedCardList = [];
+        this.feedsLoaded = Promise.resolve(true);
+      }
     })
   }
 
   retriveUserFeedCards(): void {
-    this.feedCardService.getUserFeeds().subscribe(data => {
-      this.userFeedCardList = data;
-      this.userFeedsLoaded = Promise.resolve(true);
+    this.feedCardService.getUserFeeds().subscribe({
+      next: data => {
+        this.userFeedCardList = data;
+        this.userFeedsLoaded = Promise.resolve(true);
+      },
+      error: error => {
+        console.log(error);
+        this.userFeedCardList = [];
+        this.userFeedsLoaded = Promise.resolve(true);
+      }
     })
   }
 

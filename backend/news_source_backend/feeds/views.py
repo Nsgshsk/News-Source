@@ -1,12 +1,14 @@
-from django.shortcuts import render
 from feedparser import parse
-import json
 
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 
 from feeds.models import Feed, FeedItem
 from feeds.serializers import FeedSerializer, FeedItemSerializer
@@ -27,7 +29,7 @@ class FeedList(APIView):
         feeds = Feed.objects.exclude(id__in = user.feeds.values_list('id', flat=True))
         serialized_feeds = FeedSerializer(feeds, many=True)
         
-        return Response(data=serialized_feeds.data, status=status.HTTP_202_ACCEPTED)
+        return Response(data=serialized_feeds.data, status=status.HTTP_200_OK)
     
     def post(self, request):
         response = self.jwt_authentication.authenticate(request)
@@ -99,7 +101,7 @@ class UserFeedList(APIView):
         user_feeds = user.feeds.all()
         if user_feeds:
             user_feeds_serialized = FeedSerializer(user_feeds, many=True)
-            return Response(data=user_feeds_serialized.data, status=status.HTTP_202_ACCEPTED)
+            return Response(data=user_feeds_serialized.data, status=status.HTTP_200_OK)
         else:
             return Response({'message': f'There are no feeds for {user.first_name}!'} ,status=status.HTTP_204_NO_CONTENT)
         
@@ -111,7 +113,7 @@ class UserFeedList(APIView):
         
         user, token = response
         
-        user.feeds.add(request.data['feedids'])
+        user.feeds.add(request.data['feedid'])
         
         user_feeds_serialized = FeedSerializer(user.feeds.all(), many=True)
         
@@ -125,11 +127,11 @@ class UserFeedList(APIView):
         
         user, token = response
         
-        user.feeds.remove(request.data['feedids'])
+        user.feeds.remove(request.data['feedid'])
         
         user_feeds_serialized = FeedSerializer(user.feeds.all(), many=True)
         
-        return Response(data=user_feeds_serialized.data, status=status.HTTP_202_ACCEPTED)
+        return Response(data=user_feeds_serialized.data, status=status.HTTP_204_NO_CONTENT)
     
 class FeedItemsList(APIView):
     permission_classes = [IsAuthenticated]
@@ -149,12 +151,14 @@ class FeedItemsList(APIView):
             feedItems.append(feedItem)
         
         feedItems = FeedItemSerializer(feedItems, many=True)
-        return Response(data=feedItems.data, status=status.HTTP_202_ACCEPTED)
+        return Response(data=feedItems.data, status=status.HTTP_200_OK)
     
 class UserFeedItemsList(APIView):
     permission_classes = [IsAuthenticated]
     jwt_authentication = JWTAuthentication()
     
+    @method_decorator(cache_page(60 * 15))
+    @method_decorator(vary_on_headers("Authorization"))
     def get(self, request):
         response = self.jwt_authentication.authenticate(request)
         
@@ -180,4 +184,4 @@ class UserFeedItemsList(APIView):
         feedItems.sort(reverse=True, key=lambda item: item.published)
         
         feedItems = FeedItemSerializer(feedItems, many=True)
-        return Response(data=feedItems.data, status=status.HTTP_202_ACCEPTED)
+        return Response(data=feedItems.data, status=status.HTTP_200_OK)

@@ -6,6 +6,7 @@ import { Token } from '../../models/Token';
 import { catchError, map, of } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Register } from '../../models/Register';
+import { error } from 'console';
 
 const baseRegister: string = 'http://127.0.0.1:8000/api/auth/register/'
 const baseLogin: string = 'http://127.0.0.1:8000/api/auth/token/'
@@ -47,9 +48,12 @@ export class AuthService {
   userLogout() {
     var payload = this.getTokens();
     var payloadJson = {
-      "refresh": payload.refresh
+      "refresh": payload.refresh.toString()
     }
-    this.http.post(baseLogout, payloadJson).subscribe();
+    this.http.post(baseLogout, payloadJson).subscribe({
+      next: data => {},
+      error: error => console.log(error)
+    });
     this.removeTokens();
   }
 

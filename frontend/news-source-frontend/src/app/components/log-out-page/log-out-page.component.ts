@@ -17,6 +17,6 @@ export class LogOutPageComponent implements OnInit {
 
       setTimeout(() => {
         this.router.navigate(['/']);
-      }, 2000);  //5s
+      }, 1500);  //2s
   }
 }
