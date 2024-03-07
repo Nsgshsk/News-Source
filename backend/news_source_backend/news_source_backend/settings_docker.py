@@ -18,18 +18,31 @@ from django.conf import settings
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ew18v$#k)-v^1g0y0u%o)&swyfv6vn*8bk7l_j@570g!*1=x_g'
+SECRET_KEY = """
+-----BEGIN RSA PRIVATE KEY-----
+MIIBOwIBAAJBAKS92v0NF29jFg6NRuxeaIsBQ7FzEkBBIKevFhjCmuXvw7Dubtqz
+kBsn8RI/BYCMJOOQZGLJkUsgxRrNLm6o7nMCAwEAAQJBAJVMHecQ8zkWAkpDzI+v
+62x2Q+PQFi03GKH+sbbUvk48a9L21T7BuL29JCDqD7CooeSA9n+7ImNkMWmE7Pki
+spECIQDc8K2qGmD2MM+qpuyBPK28eLvcYFyHnxYNLhBIhf7a+wIhAL7iNNzY8ogf
++3vuV0J5bUT8fOP4b7FAzvP8PqpSyODpAiEAy5akEIj6LCHSWmgyquwlE/UU9v98
+hCReB4sYyhtfOp0CIBIrOdjjlYI7eRZ8wzWClVIBrmmMliULBCfZFKXlp1UxAiAo
+bl0uefVo67m7oOADg8BnT2r3qFyAhLUQGBZxLTbreQ==
+-----END RSA PRIVATE KEY-----"""
+
+PUBLIC_KEY = """
+-----BEGIN PUBLIC KEY-----
+MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKS92v0NF29jFg6NRuxeaIsBQ7FzEkBB
+IKevFhjCmuXvw7DubtqzkBsn8RI/BYCMJOOQZGLJkUsgxRrNLm6o7nMCAwEAAQ==
+-----END PUBLIC KEY-----"""
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
-
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app']
 
 # Application definition
 
@@ -51,6 +64,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,15 +72,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    'https://localhost:4200',
-)
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS  = [
+    'http://localhost:4200',
+]
 
 ROOT_URLCONF = 'news_source_backend.urls'
 
@@ -88,6 +99,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'news_source_backend.wsgi.application'
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+        "TIMEOUT": 3600,
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -95,14 +113,13 @@ WSGI_APPLICATION = 'news_source_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'verceldb',
-        'USER': 'default',
-        'PASSWORD': '70LFHRNEJYSA',
-        'HOST': 'ep-solitary-night-99555913-pooler.eu-central-1.postgres.vercel-storage.com',
+        'NAME': 'news_source_development',
+        'USER': 'dev_app',
+        'PASSWORD': 'developer@123',
+        'HOST': 'database',
         'PORT': '5432'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -116,17 +133,27 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'news_source_backend.throttles.LoginRateThrottle',
+        'news_source_backend.throttles.RegisterRateThrottle',
+        'news_source_backend.throttles.UserFeedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'login': '20/hour',
+        'register': '250/day',
+        'userfeeds': '20/minute',
+    }
 }
 
-DEFAULTS = {
+SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 
-    'ALGORITHM': 'HS256',
+    'ALGORITHM': 'RS256',
     'SIGNING_KEY': settings.SECRET_KEY,
-    'VERIFYING_KEY': None,
+    'VERIFYING_KEY': settings.PUBLIC_KEY,
     'AUDIENCE': None,
     'ISSUER': None,
 
@@ -146,16 +173,16 @@ DEFAULTS = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 

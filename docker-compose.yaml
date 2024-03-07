@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  database:
+    image: postgres
+    volumes:
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+    environment:
+      POSTGRES_USER: dev_app
+      POSTGRES_PASSWORD: developer@123
+      POSTGRES_DB: news_source_development
+    ports:
+      - 5432:5432
+  backend:
+    container_name: backend
+    build: backend/news_source_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend/news_source_backend:/home/app
+    ports:
+      - "8000:8000"
+  frontend:
+    container_name: frontend
+    build: frontend/news-source-frontend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend/news_source_backend:/home/app
+    ports:
+      - "8000:8000"
