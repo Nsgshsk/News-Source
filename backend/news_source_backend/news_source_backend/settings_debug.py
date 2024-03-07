@@ -114,8 +114,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'news_source_development',
-        'USER': 'postgres',
-        'PASSWORD': '',
+        'USER': 'dev_app',
+        'PASSWORD': 'developer@123',
         'HOST': 'localhost',
         'PORT': '5432'
     }
